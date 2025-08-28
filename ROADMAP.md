@@ -6,10 +6,10 @@ This roadmap outlines the step-by-step development of a React frontend for the D
 
 ### 1.1 Project Setup
 - [x] Initialize React + Vite project with TypeScript
-- [ ] Install essential dependencies (React, TypeScript, Vite)
-- [ ] Configure development environment
-- [ ] Set up basic project structure
-- [ ] Verify that `npm run dev` starts the development server
+- [x] Install essential dependencies (React, TypeScript, Vite)
+- [x] Configure development environment
+- [x] Set up basic project structure
+- [x] Verify that `npm run dev` starts the development server
 
 **Goal**: Have a working React development environment
 **Deliverable**: Basic React app running on localhost:5173
