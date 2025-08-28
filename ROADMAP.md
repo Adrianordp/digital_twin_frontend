@@ -5,7 +5,7 @@ This roadmap outlines the step-by-step development of a React frontend for the D
 ## Phase 1: Basic Setup & Foundation
 
 ### 1.1 Project Setup
-- [ ] Initialize React + Vite project with TypeScript
+- [x] Initialize React + Vite project with TypeScript
 - [ ] Install essential dependencies (React, TypeScript, Vite)
 - [ ] Configure development environment
 - [ ] Set up basic project structure
