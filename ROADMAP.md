@@ -15,9 +15,9 @@ This roadmap outlines the step-by-step development of a React frontend for the D
 **Deliverable**: Basic React app running on localhost:5173
 
 ### 1.2 API Client
-- [ ] Create `src/services/api.ts` file
-- [ ] Implement API client class with base URL configuration
-- [ ] Add TypeScript interfaces for API requests/responses
+- [x] Create `src/services/api.ts` file
+- [x] Implement API client class with base URL configuration
+- [x] Add TypeScript interfaces for API requests/responses
 - [ ] Implement methods for each backend endpoint:
   - `initSimulation(modelName, params?)`
   - `stepSimulation(sessionId, controlInput, deltaTime?)`
