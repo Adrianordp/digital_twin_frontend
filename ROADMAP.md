@@ -26,7 +26,7 @@ This roadmap outlines the step-by-step development of a React frontend for the D
   - `getLogs(sessionId)`
   - `resetSimulation(sessionId, params?)`
   - `updateParams(sessionId, params)`
-- [ ] Add error handling for API calls
+- [x] Add error handling for API calls
 
 **Goal**: Centralized API communication layer
 **Deliverable**: Reusable API client ready for frontend components
