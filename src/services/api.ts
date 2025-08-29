@@ -24,17 +24,21 @@ export class DigitalTwinApiClient {
         model_name: string,
         params?: Record<string, unknown> | null
     ): Promise<SessionInitResponse> {
-        const response = await fetch(`${this.baseUrl}/simulate/init`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ model_name, params }),
-        });
-
-        if (!response.ok) {
-            throw new Error(`Failed to initialize simulation: ${response.status} ${response.statusText}`);
+        try {
+            const response = await fetch(`${this.baseUrl}/simulate/init`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ model_name, params }),
+            });
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Failed to initialize simulation: ${response.status} ${response.statusText} - ${errorText}`);
+            }
+            return response.json();
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : String(error);
+            throw new Error(`Network or server error during initSimulation: ${message}`);
         }
-
-        return response.json();
     }
 
     /**
@@ -45,56 +49,72 @@ export class DigitalTwinApiClient {
         control_input: number,
         delta_time?: number
     ): Promise<StateResponse> {
-        const response = await fetch(`${this.baseUrl}/simulate/step`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ session_id, control_input, delta_time }),
-        });
-
-        if (!response.ok) {
-            throw new Error(`Failed to step simulation: ${response.status} ${response.statusText}`);
+        try {
+            const response = await fetch(`${this.baseUrl}/simulate/step`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ session_id, control_input, delta_time }),
+            });
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Failed to step simulation: ${response.status} ${response.statusText} - ${errorText}`);
+            }
+            return response.json();
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : String(error);
+            throw new Error(`Network or server error during stepSimulation: ${message}`);
         }
-
-        return response.json();
     }
 
     /**
      * Get the current state of a simulation session.
      */
     async getState(session_id: string): Promise<StateResponse> {
-        const response = await fetch(`${this.baseUrl}/simulate/state/${session_id}`);
-
-        if (!response.ok) {
-            throw new Error(`Failed to get state: ${response.status} ${response.statusText}`);
+        try {
+            const response = await fetch(`${this.baseUrl}/simulate/state/${session_id}`);
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Failed to get state: ${response.status} ${response.statusText} - ${errorText}`);
+            }
+            return response.json();
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : String(error);
+            throw new Error(`Network or server error during getState: ${message}`);
         }
-
-        return response.json();
     }
 
     /**
      * Get the history of a simulation session.
      */
     async getHistory(session_id: string): Promise<HistoryResponse> {
-        const response = await fetch(`${this.baseUrl}/simulate/history/${session_id}`);
-
-        if (!response.ok) {
-            throw new Error(`Failed to get history: ${response.status} ${response.statusText}`);
+        try {
+            const response = await fetch(`${this.baseUrl}/simulate/history/${session_id}`);
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Failed to get history: ${response.status} ${response.statusText} - ${errorText}`);
+            }
+            return response.json();
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : String(error);
+            throw new Error(`Network or server error during getHistory: ${message}`);
         }
-
-        return response.json();
     }
 
     /**
      * Get the logs of a simulation session.
      */
     async getLogs(session_id: string): Promise<LogsResponse> {
-        const response = await fetch(`${this.baseUrl}/simulate/logs/${session_id}`);
-
-        if (!response.ok) {
-            throw new Error(`Failed to get logs: ${response.status} ${response.statusText}`);
+        try {
+            const response = await fetch(`${this.baseUrl}/simulate/logs/${session_id}`);
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Failed to get logs: ${response.status} ${response.statusText} - ${errorText}`);
+            }
+            return response.json();
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : String(error);
+            throw new Error(`Network or server error during getLogs: ${message}`);
         }
-
-        return response.json();
     }
 
     /**
@@ -104,17 +124,21 @@ export class DigitalTwinApiClient {
         session_id: string,
         params?: Record<string, unknown> | null
     ): Promise<StateResponse> {
-        const response = await fetch(`${this.baseUrl}/simulate/reset`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ session_id, params }),
-        });
-
-        if (!response.ok) {
-            throw new Error(`Failed to reset simulation: ${response.status} ${response.statusText}`);
+        try {
+            const response = await fetch(`${this.baseUrl}/simulate/reset`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ session_id, params }),
+            });
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Failed to reset simulation: ${response.status} ${response.statusText} - ${errorText}`);
+            }
+            return response.json();
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : String(error);
+            throw new Error(`Network or server error during resetSimulation: ${message}`);
         }
-
-        return response.json();
     }
 
     /**
@@ -124,17 +148,21 @@ export class DigitalTwinApiClient {
         session_id: string,
         params: Record<string, unknown>
     ): Promise<StateResponse> {
-        const response = await fetch(`${this.baseUrl}/simulate/params`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ session_id, params }),
-        });
-
-        if (!response.ok) {
-            throw new Error(`Failed to update params: ${response.status} ${response.statusText}`);
+        try {
+            const response = await fetch(`${this.baseUrl}/simulate/params`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ session_id, params }),
+            });
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Failed to update params: ${response.status} ${response.statusText} - ${errorText}`);
+            }
+            return response.json();
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : String(error);
+            throw new Error(`Network or server error during updateParams: ${message}`);
         }
-
-        return response.json();
     }
 }
 
