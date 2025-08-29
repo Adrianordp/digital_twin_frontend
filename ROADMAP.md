@@ -18,7 +18,7 @@ This roadmap outlines the step-by-step development of a React frontend for the D
 - [x] Create `src/services/api.ts` file
 - [x] Implement API client class with base URL configuration
 - [x] Add TypeScript interfaces for API requests/responses
-- [ ] Implement methods for each backend endpoint:
+- [x] Implement methods for each backend endpoint:
   - `initSimulation(modelName, params?)`
   - `stepSimulation(sessionId, controlInput, deltaTime?)`
   - `getState(sessionId)`
