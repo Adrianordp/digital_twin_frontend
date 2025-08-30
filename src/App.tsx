@@ -1,4 +1,3 @@
-
 function App() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -6,11 +5,11 @@ function App() {
         <h1 className="text-2xl font-bold text-gray-800">Digital Twin</h1>
         <nav className="mt-2">
           {/* Add static navigation links here */}
-          <ul className="flex gap-6">
-            <li><a href="#model" className="text-gray-700 hover:text-blue-600 font-medium">Model Selection</a></li>
-            <li><a href="#simulation" className="text-gray-700 hover:text-blue-600 font-medium">Simulation</a></li>
-            <li><a href="#history" className="text-gray-700 hover:text-blue-600 font-medium">History/Charts</a></li>
-            <li><a href="#logs" className="text-gray-700 hover:text-blue-600 font-medium">Logs</a></li>
+          <ul className="flex gap-4 flex-wrap">
+            <li><a href="#model" className="text-sm sm:text-base text-gray-700 hover:text-blue-600 font-medium">Model Selection</a></li>
+            <li><a href="#simulation" className="text-sm sm:text-base text-gray-700 hover:text-blue-600 font-medium">Simulation</a></li>
+            <li><a href="#history" className="text-sm sm:text-base text-gray-700 hover:text-blue-600 font-medium">History/Charts</a></li>
+            <li><a href="#logs" className="text-sm sm:text-base text-gray-700 hover:text-blue-600 font-medium">Logs</a></li>
           </ul>
         </nav>
       </header>
