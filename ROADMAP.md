@@ -35,8 +35,8 @@ This roadmap outlines the step-by-step development of a React frontend for the D
 
 ### 1.3 Basic UI Layout
 - [x] Install and configure Tailwind CSS
-- [ ] Create basic application layout with header and main content area
-- [ ] Add application title and basic navigation structure
+- [x] Create basic application layout with header and main content area
+- [x] Add application title and basic navigation structure
 - [ ] Set up responsive container for main content
 - [ ] Test layout on different screen sizes
 
