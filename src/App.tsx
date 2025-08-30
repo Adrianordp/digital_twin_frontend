@@ -14,9 +14,9 @@ function App() {
           </ul>
         </nav>
       </header>
-      <main className="flex-1 flex flex-col items-center justify-center px-4">
-        {/* Put main content here */}
-        <div className="w-full max-w-3xl bg-white rounded-lg shadow p-8 mt-8">
+      <main className="flex-1 flex flex-col items-center justify-center px-4 md:px-8">
+        {/* Make this container responsive */}
+        <div className="w-full max-w-3xl bg-white rounded-md shadow-sm p-6 mx-auto mt-8">
           <p className="text-gray-600 text-center">Welcome!</p>
         </div>
       </main>
