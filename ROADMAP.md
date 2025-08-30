@@ -31,7 +31,7 @@ This roadmap outlines the step-by-step development of a React frontend for the D
 **Goal**: Centralized API communication layer
 **Deliverable**: Reusable API client ready for frontend components
 
-- [ ] Add unit tests for API client
+- [x] Add unit tests for API client
 
 ### 1.3 Basic UI Layout
 - [ ] Install and configure Tailwind CSS
