@@ -78,6 +78,15 @@ This roadmap outlines the step-by-step development of a React frontend for the D
 - [ ] Handle cases where no simulation is active
 - [ ] Style the state display for clarity
 
+All items for Phase 2.3 completed — `StateDisplay` component added, wired into the app, and covered by unit tests.
+
+ - [x] Create `StateDisplay` component
+ - [x] Fetch and display current simulation state
+ - [x] Format state data in a readable way (table or cards)
+ - [x] Add refresh button to manually update state
+ - [x] Handle cases where no simulation is active
+ - [x] Style the state display for clarity
+
 **Goal**: User can see current simulation state
 **Deliverable**: Real-time state monitoring interface
 
