@@ -1,0 +1,25 @@
+name: PR Guard (Gitflow)
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR source branch
+        run: |
+            echo "Validating PR base and source branch..."
+            echo "GITHUB_BASE_REF: ${GITHUB_BASE_REF}"
+
+            # Allowed patterns: release/* or hotfix/*
+            if [[ ! "${GITHUB_HEAD_REF}" =~ ^(release|hotfix)/.* ]]; then
+
+                echo "❌ Disallowed branch: ${GITHUB_HEAD_REF}"
+                echo "❌ Pull requests to 'main' are only allowed from 'release/*' or 'hotfix/*' branches."
+                exit 1
+            fi
+
+            echo "✅ Allowed branch: ${GITHUB_HEAD_REF}"
+
