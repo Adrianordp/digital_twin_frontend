@@ -1,4 +1,9 @@
+import { useState } from 'react';
+import ModelSelector from './components/ModelSelector';
+
 function App() {
+  const [selectedModel, setSelectedModel] = useState<string>('water_tank');
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <header className="bg-white shadow-sm py-4 px-6">
@@ -15,8 +20,14 @@ function App() {
       </header>
       <main className="flex-1 flex flex-col items-center justify-center px-4 md:px-8">
         {/* Make this container responsive */}
-        <div className="w-full max-w-3xl bg-white rounded-md shadow-sm p-6 mx-auto mt-8">
-          <p className="text-gray-600 text-center">Welcome!</p>
+        <div id="model" className="w-full max-w-3xl bg-white rounded-md shadow-sm p-6 mx-auto mt-8">
+          <ModelSelector value={selectedModel} onChange={setSelectedModel} />
+          <div className="mt-4 text-sm text-gray-600">Selected model: {selectedModel}</div>
+        </div>
+
+        <div id="simulation" className="w-full max-w-3xl bg-white rounded-md shadow-sm p-6 mx-auto mt-6">
+          <h2 className="text-lg font-semibold text-gray-800">Simulation</h2>
+          <p className="text-sm text-gray-600 mt-2">Simulation controls and initializer will appear here.</p>
         </div>
       </main>
     </div>
