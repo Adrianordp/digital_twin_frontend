@@ -34,7 +34,7 @@ export default function ModelSelector({ value, onChange }: ModelSelectorProps) {
               value={opt.value}
               checked={value === opt.value}
               onChange={() => handleChange(opt.value)}
-              className="mt-1 h-4 w-4 text-blue-600"
+              className="mt-1 h-4 w-4 accent-blue-600"
             />
             <div>
               <div className="text-sm font-semibold text-gray-800">{opt.label}</div>
