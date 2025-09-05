@@ -27,9 +27,12 @@ This roadmap outlines the step-by-step development of a React frontend for the D
   - `resetSimulation(sessionId, params?)`
   - `updateParams(sessionId, params)`
 - [x] Add error handling for API calls
+- [x] Generate TypeScript client from OpenAPI specification
+- [x] Replace manual API types with generated types
+- [x] Add OpenAPI generator script to package.json
 
-**Goal**: Centralized API communication layer
-**Deliverable**: Reusable API client ready for frontend components
+**Goal**: Centralized API communication layer with type-safe generated client
+**Deliverable**: Generated TypeScript client with proper type safety
 
 - [x] Add unit tests for API client
 

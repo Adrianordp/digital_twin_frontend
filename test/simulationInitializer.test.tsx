@@ -2,9 +2,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import SimulationInitializer from '../src/components/SimulationInitializer';
-import { apiClient } from '../src/services/api';
+import { apiClient } from '../src/services/api-client';
 
-vi.mock('../src/services/api', () => ({
+vi.mock('../src/services/api-client', () => ({
     apiClient: {
         initSimulation: vi.fn(),
     },
@@ -17,7 +17,7 @@ describe('SimulationInitializer', () => {
 
     it('renders form and initializes session on submit', async () => {
         const mocked = vi.mocked(apiClient.initSimulation);
-        mocked.mockResolvedValue({ session_id: 'session-123' });
+        mocked.mockResolvedValue({ sessionId: 'session-123' });
 
         const onInit = vi.fn();
         render(<SimulationInitializer modelName="water_tank" onInit={onInit} />);
@@ -37,7 +37,6 @@ describe('SimulationInitializer', () => {
 
     it('shows error for invalid JSON', async () => {
         render(<SimulationInitializer modelName="water_tank" />);
-        const input = screen.getByPlaceholderText('Leave empty to use advanced JSON');
         // Toggle advanced to reveal textarea and enter invalid JSON
         const toggle = screen.getByText('Show advanced JSON');
         fireEvent.click(toggle);
@@ -64,7 +63,7 @@ describe('SimulationInitializer', () => {
 
     it('accepts advanced JSON object and sends parsed params', async () => {
         const mocked = vi.mocked(apiClient.initSimulation);
-        mocked.mockResolvedValue({ session_id: 'session-json-1' });
+        mocked.mockResolvedValue({ sessionId: 'session-json-1' });
 
         render(<SimulationInitializer modelName="room_temperature" />);
 
