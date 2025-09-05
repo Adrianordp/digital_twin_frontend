@@ -1,5 +1,6 @@
 import ModelSelector from './components/ModelSelector';
 import SimulationInitializer from './components/SimulationInitializer';
+import StateDisplay from './components/StateDisplay';
 import { SessionProvider } from './context/SessionContext';
 import { useSession } from './context/useSession';
 
@@ -29,10 +30,13 @@ function InnerApp() {
 
         <div id="simulation" className="w-full max-w-3xl bg-white rounded-md shadow-sm p-6 mx-auto mt-6">
           <h2 className="text-lg font-semibold text-gray-800">Simulation</h2>
-          <div className="mt-2">
+          <div className="mt-2 space-y-4">
             <SimulationInitializer modelName={selectedModel} onInit={(id) => setSessionId(id)} />
             <p className="text-sm text-gray-600 mt-2">Simulation controls will appear after initialization.</p>
             {sessionId && <div className="mt-2 text-sm text-green-600">Active session: {sessionId}</div>}
+            <div className="mt-4">
+              <StateDisplay sessionId={sessionId} />
+            </div>
           </div>
         </div>
       </main>
