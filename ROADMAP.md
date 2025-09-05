@@ -56,13 +56,13 @@ This roadmap outlines the step-by-step development of a React frontend for the D
 **Deliverable**: Working model selection interface
 
 ### 2.2 Create Simulation
-- [ ] Create `SimulationInitializer` component
-- [ ] Add form for simulation initialization
-- [ ] Include optional parameters input (JSON or form fields)
-- [ ] Implement form validation
-- [ ] Connect to API client's `initSimulation` method
-- [ ] Handle loading states and success/error feedback
-- [ ] Store session ID in application state
+- [x] Create `SimulationInitializer` component
+- [x] Add form for simulation initialization
+- [x] Include optional parameters input (JSON or form fields)
+- [x] Implement form validation
+- [x] Connect to API client's `initSimulation` method
+- [x] Handle loading states and success/error feedback
+- [x] Store session ID in application state
 
 **Goal**: User can create new simulation sessions
 **Deliverable**: Functional simulation creation form
