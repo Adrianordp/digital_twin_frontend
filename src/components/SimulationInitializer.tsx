@@ -71,7 +71,7 @@ export default function SimulationInitializer({ modelName, onInit }: SimulationI
                     onChange={(e) => setInitialValue(e.target.value === '' ? '' : Number(e.target.value))}
                     placeholder="Leave empty to use advanced JSON"
                     data-testid="initial-input"
-                    className="mt-1 block w-full rounded-md border-gray-200 shadow-sm"
+                    className="mt-1 block w-full rounded-md border border-gray-200 shadow-sm"
                 />
                 <div className="mt-2">
                     <button type="button" className="text-sm text-gray-600" onClick={() => setShowAdvanced(s => !s)}>
@@ -85,7 +85,7 @@ export default function SimulationInitializer({ modelName, onInit }: SimulationI
                         onChange={(e) => setParamsText(e.target.value)}
                         placeholder='{ "initial": 0 }'
                         data-testid="params-textarea"
-                        className="mt-2 block w-full min-h-[6rem] rounded-md border-gray-200 shadow-sm"
+                        className="mt-2 block w-full min-h-[6rem] rounded-md border border-gray-200 shadow-sm"
                     />
                 )}
             </div>
