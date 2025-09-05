@@ -1,11 +1,14 @@
+import React from 'react';
 import ModelSelector from './components/ModelSelector';
 import SimulationInitializer from './components/SimulationInitializer';
 import StateDisplay from './components/StateDisplay';
+import SimulationControls from './components/SimulationControls';
 import { SessionProvider } from './context/SessionContext';
 import { useSession } from './context/useSession';
 
 function InnerApp() {
   const { selectedModel, setSelectedModel, sessionId, setSessionId } = useSession();
+  const [refreshSignal, setRefreshSignal] = React.useState<number>(0);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -34,8 +37,13 @@ function InnerApp() {
             <SimulationInitializer modelName={selectedModel} onInit={(id) => setSessionId(id)} />
             <p className="text-sm text-gray-600 mt-2">Simulation controls will appear after initialization.</p>
             {sessionId && <div className="mt-2 text-sm text-green-600">Active session: {sessionId}</div>}
+            {sessionId && (
+              <div className="mt-2">
+                <SimulationControls sessionId={sessionId} onRefresh={() => setRefreshSignal((s) => s + 1)} />
+              </div>
+            )}
             <div className="mt-4">
-              <StateDisplay sessionId={sessionId} />
+              <StateDisplay sessionId={sessionId} refreshSignal={refreshSignal} />
             </div>
           </div>
         </div>
