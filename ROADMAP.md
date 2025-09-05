@@ -71,14 +71,6 @@ This roadmap outlines the step-by-step development of a React frontend for the D
 **Deliverable**: Functional simulation creation form
 
 ### 2.3 Basic State Display
-- [ ] Create `StateDisplay` component
-- [ ] Fetch and display current simulation state
-- [ ] Format state data in a readable way (table or cards)
-- [ ] Add refresh button to manually update state
-- [ ] Handle cases where no simulation is active
-- [ ] Style the state display for clarity
-
-All items for Phase 2.3 completed — `StateDisplay` component added, wired into the app, and covered by unit tests.
 
  - [x] Create `StateDisplay` component
  - [x] Fetch and display current simulation state
@@ -93,13 +85,13 @@ All items for Phase 2.3 completed — `StateDisplay` component added, wired into
 ## Phase 3: Simulation Control
 
 ### 3.1 Step Controls
-- [ ] Create `SimulationControls` component
-- [ ] Add "Step Forward" button
-- [ ] Implement step-by-step simulation advancement
-- [ ] Display step count or simulation time
-- [ ] Add loading indicators during step operations
-- [ ] Update state display after each step
-- [ ] Handle step errors gracefully
+- [x] Create `SimulationControls` component
+- [x] Add "Step Forward" button
+- [x] Implement step-by-step simulation advancement
+- [x] Display step count or simulation time
+- [x] Add loading indicators during step operations
+- [x] Update state display after each step
+- [x] Handle step errors gracefully
 
 **Goal**: User can manually advance simulation
 **Deliverable**: Step-by-step simulation control
