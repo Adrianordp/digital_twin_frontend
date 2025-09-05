@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { apiClient } from '../services/api';
+import { apiClient } from '../services/api-client';
 
 export interface SimulationInitializerProps {
     modelName: string;
@@ -40,8 +40,8 @@ export default function SimulationInitializer({ modelName, onInit }: SimulationI
         setLoading(true);
         try {
             const res = await apiClient.initSimulation(modelName, params);
-            setSessionId(res.session_id);
-            if (onInit) onInit(res.session_id);
+            setSessionId(res.sessionId);
+            if (onInit) onInit(res.sessionId);
         } catch (err: unknown) {
             const msg = err instanceof Error ? err.message : String(err);
             setError(msg);
