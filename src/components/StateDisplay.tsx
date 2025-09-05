@@ -3,9 +3,10 @@ import { apiClient } from '../services/api-client';
 
 export interface StateDisplayProps {
     sessionId: string | null;
+    refreshSignal?: number;
 }
 
-export default function StateDisplay({ sessionId }: StateDisplayProps) {
+export default function StateDisplay({ sessionId, refreshSignal }: StateDisplayProps) {
     const [state, setState] = useState<Record<string, unknown> | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -34,6 +35,12 @@ export default function StateDisplay({ sessionId }: StateDisplayProps) {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [sessionId]);
+
+    useEffect(() => {
+        if (!sessionId) return;
+        fetchState();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [refreshSignal]);
 
     if (!sessionId) {
         return <div className="text-sm text-gray-600">No active simulation session.</div>;
