@@ -60,4 +60,23 @@ describe('SimulationInitializer', () => {
 
         expect(await screen.findByText(/Server error/)).toBeInTheDocument();
     });
+
+    it('accepts advanced JSON object and sends parsed params', async () => {
+        const mocked = vi.mocked(apiClient.initSimulation);
+        mocked.mockResolvedValue({ session_id: 'session-json-1' });
+
+        render(<SimulationInitializer modelName="room_temperature" />);
+
+        // Reveal advanced textarea
+        const toggle = screen.getByText('Show advanced JSON');
+        fireEvent.click(toggle);
+        const textarea = screen.getByTestId('params-textarea');
+        fireEvent.change(textarea, { target: { value: '{ "initial": 42, "name": "test" }' } });
+
+        const button = screen.getByTestId('init-button');
+        fireEvent.click(button);
+
+        await waitFor(() => expect(mocked).toHaveBeenCalledWith('room_temperature', { initial: 42, name: 'test' }));
+        expect(await screen.findByText(/Session: session-json-1/)).toBeInTheDocument();
+    });
 });
