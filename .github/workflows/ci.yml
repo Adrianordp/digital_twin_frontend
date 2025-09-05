@@ -12,24 +12,34 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+      uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+      - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      id: playwright-cache
+      with:
+        path: |
+          ~/.cache/ms-playwright
+        key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-playwright-
 
       - name: Install dependencies
-        run: npm ci
+      run: npm ci
 
       - name: Install Playwright browsers and system deps
-        run: npx playwright install --with-deps
+      run: npx playwright install --with-deps
 
       - name: Run unit tests (Vitest)
-        run: npm test
+      run: npm test
 
       - name: Run Playwright layout tests
-        run: npm run test:layout
-        env:
-          CI: true
+      run: npm run test:layout
+      env:
+        CI: true
