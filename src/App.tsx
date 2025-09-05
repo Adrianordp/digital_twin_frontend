@@ -1,8 +1,10 @@
-import { useState } from 'react';
 import ModelSelector from './components/ModelSelector';
+import SimulationInitializer from './components/SimulationInitializer';
+import { SessionProvider } from './context/SessionContext';
+import { useSession } from './context/useSession';
 
-function App() {
-  const [selectedModel, setSelectedModel] = useState<string>('water_tank');
+function InnerApp() {
+  const { selectedModel, setSelectedModel, sessionId, setSessionId } = useSession();
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -27,10 +29,22 @@ function App() {
 
         <div id="simulation" className="w-full max-w-3xl bg-white rounded-md shadow-sm p-6 mx-auto mt-6">
           <h2 className="text-lg font-semibold text-gray-800">Simulation</h2>
-          <p className="text-sm text-gray-600 mt-2">Simulation controls and initializer will appear here.</p>
+          <div className="mt-2">
+            <SimulationInitializer modelName={selectedModel} onInit={(id) => setSessionId(id)} />
+            <p className="text-sm text-gray-600 mt-2">Simulation controls will appear after initialization.</p>
+            {sessionId && <div className="mt-2 text-sm text-green-600">Active session: {sessionId}</div>}
+          </div>
         </div>
       </main>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <SessionProvider>
+      <InnerApp />
+    </SessionProvider>
   );
 }
 
