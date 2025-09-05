@@ -26,3 +26,4 @@ dist-ssr
 # Playwright test artifacts
 playwright-report/
 playwright-results/
+.openapi-generator/
