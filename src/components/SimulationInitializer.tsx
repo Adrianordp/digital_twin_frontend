@@ -26,7 +26,7 @@ export default function SimulationInitializer({ modelName, onInit }: SimulationI
             try {
                 // allow users to enter JSON object
                 const parsed = JSON.parse(paramsText);
-                if (typeof parsed !== 'object' || Array.isArray(parsed)) {
+                if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) {
                     setError('Parameters must be a JSON object');
                     return;
                 }
@@ -70,6 +70,7 @@ export default function SimulationInitializer({ modelName, onInit }: SimulationI
                     value={initialValue}
                     onChange={(e) => setInitialValue(e.target.value === '' ? '' : Number(e.target.value))}
                     placeholder="Leave empty to use advanced JSON"
+                    data-testid="initial-input"
                     className="mt-1 block w-full rounded-md border-gray-200 shadow-sm"
                 />
                 <div className="mt-2">
@@ -83,6 +84,7 @@ export default function SimulationInitializer({ modelName, onInit }: SimulationI
                         value={paramsText}
                         onChange={(e) => setParamsText(e.target.value)}
                         placeholder='{ "initial": 0 }'
+                        data-testid="params-textarea"
                         className="mt-2 block w-full min-h-[6rem] rounded-md border-gray-200 shadow-sm"
                     />
                 )}
@@ -92,6 +94,7 @@ export default function SimulationInitializer({ modelName, onInit }: SimulationI
                 <button
                     type="submit"
                     disabled={loading}
+                    data-testid="init-button"
                     className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md disabled:opacity-60"
                 >
                     {loading ? 'Initializing...' : 'Initialize Simulation'}
