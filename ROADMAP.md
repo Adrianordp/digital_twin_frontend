@@ -46,11 +46,11 @@ This roadmap outlines the step-by-step development of a React frontend for the D
 ## Phase 2: Simulation Management
 
 ### 2.1 Model Selection
-- [ ] Create `ModelSelector` component
-- [ ] Add dropdown/radio buttons for model selection (water_tank, room_temperature)
-- [ ] Implement model selection state management
-- [ ] Add model descriptions or help text
-- [ ] Style the model selector component
+- [x] Create `ModelSelector` component
+- [x] Add dropdown/radio buttons for model selection (water_tank, room_temperature)
+- [x] Implement model selection state management
+- [x] Add model descriptions or help text
+- [x] Style the model selector component
 
 **Goal**: User can choose which simulation model to use
 **Deliverable**: Working model selection interface
