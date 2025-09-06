@@ -97,12 +97,12 @@ This roadmap outlines the step-by-step development of a React frontend for the D
 **Deliverable**: Step-by-step simulation control
 
 ### 3.2 Control Inputs
-- [ ] Add control input field/slider to SimulationControls
-- [ ] Implement different input types based on model
-- [ ] Add input validation and bounds checking
-- [ ] Show current control value clearly
-- [ ] Allow both manual input and slider interaction
-- [ ] Add helpful labels and units
+- [x] Add control input field/slider to SimulationControls
+- [x] Implement different input types based on model
+- [x] Add input validation and bounds checking
+- [x] Show current control value clearly
+- [x] Allow both manual input and slider interaction
+- [x] Add helpful labels and units
 
 **Goal**: User can control simulation parameters
 **Deliverable**: Interactive control input interface
