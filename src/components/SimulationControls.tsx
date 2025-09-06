@@ -17,6 +17,10 @@ export default function SimulationControls({ sessionId, selectedModel = null, on
     const [error, setError] = useState<string | null>(null);
     const [stepCount, setStepCount] = useState<number | null>(null);
     const [simTime, setSimTime] = useState<number | null>(null);
+    const [showResetDialog, setShowResetDialog] = useState<boolean>(false);
+    const [resetLoading, setResetLoading] = useState<boolean>(false);
+    const [resetError, setResetError] = useState<string | null>(null);
+    const [resetParams, setResetParams] = useState<string>('{}');
 
     const config = selectedModel && MODEL_CONFIGS[selectedModel] ? MODEL_CONFIGS[selectedModel] : { min: -100, max: 100, step: 1, default: 0 };
     const [controlValue, setControlValue] = useState<number>(config.default);
@@ -75,6 +79,53 @@ export default function SimulationControls({ sessionId, selectedModel = null, on
         setLoading(false);
     };
 
+    const resetSimulation = async () => {
+        setResetLoading(true);
+        setResetError(null);
+        // Clear visible simulation state immediately to reflect reset in UI
+        setStepCount(null);
+        setSimTime(null);
+        // Reset control value to model default immediately
+        setControlValue(config.default);
+
+        try {
+            // Parse the parameters from the input
+            let parsedParams: Record<string, unknown> | null = null;
+            if (resetParams.trim() !== '{}' && resetParams.trim() !== '') {
+                try {
+                    parsedParams = JSON.parse(resetParams);
+                } catch {
+                    throw new Error('Invalid JSON parameters. Please check the format.');
+                }
+            }
+
+            // Call the API to reset the simulation with parameters
+            const result = await apiClient.resetSimulation(sessionId, parsedParams);
+
+            // Extract step and time from the reset state
+            const { step: sc, time } = extractStepAndTime(result.state ?? null);
+            setStepCount(sc);
+            setSimTime(time);
+
+            // Reset control value to default for the current model
+            setControlValue(config.default);
+
+            // Clear any previous errors
+            setError(null);
+
+            // Refresh parent components
+            onRefresh?.();
+
+            // Close the dialog
+            setShowResetDialog(false);
+        } catch (err: unknown) {
+            const msg = err instanceof Error ? err.message : String(err);
+            setResetError(msg);
+        }
+
+        setResetLoading(false);
+    };
+
     return (
         <div className="flex flex-col gap-3">
             <div className="flex items-center gap-3">
@@ -84,6 +135,18 @@ export default function SimulationControls({ sessionId, selectedModel = null, on
                     disabled={loading}
                 >
                     {loading ? 'Stepping...' : 'Step Forward'}
+                </button>
+
+                <button
+                    className="px-3 py-1 bg-red-600 text-white rounded disabled:opacity-60 hover:bg-red-700"
+                    onClick={() => {
+                        setResetParams('{}');
+                        setResetError(null);
+                        setShowResetDialog(true);
+                    }}
+                    disabled={loading}
+                >
+                    Reset Simulation
                 </button>
 
                 <div className="flex items-center gap-2 text-sm text-gray-700">
@@ -131,6 +194,62 @@ export default function SimulationControls({ sessionId, selectedModel = null, on
                     >
                         Retry
                     </button>
+                </div>
+            )}
+
+            {/* Reset Confirmation Dialog */}
+            {showResetDialog && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+                        <h3 className="text-lg font-semibold mb-4 text-gray-900">Reset Simulation</h3>
+                        <p className="text-gray-600 mb-4">
+                            Are you sure you want to reset the simulation? This will clear all current progress and return to the initial state.
+                        </p>
+
+                        <div className="mb-4">
+                            <label htmlFor="reset-params" className="block text-sm font-medium text-gray-700 mb-2">
+                                Reset Parameters (optional JSON):
+                            </label>
+                            <textarea
+                                id="reset-params"
+                                className="w-full border border-gray-300 rounded p-2 text-sm font-mono h-20 resize-none"
+                                placeholder='{"param1": "value1", "param2": "value2"}'
+                                value={resetParams}
+                                onChange={(e) => setResetParams(e.target.value)}
+                                disabled={resetLoading}
+                            />
+                            <p className="text-xs text-gray-500 mt-1">
+                                Leave empty or use {"{}"} for default parameters
+                            </p>
+                        </div>
+
+                        {resetError && (
+                            <div className="mb-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded p-3">
+                                Failed to reset simulation: {resetError}
+                            </div>
+                        )}
+
+                        <div className="flex gap-3 justify-end">
+                            <button
+                                className="px-4 py-2 text-gray-600 border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-60"
+                                onClick={() => {
+                                    setShowResetDialog(false);
+                                    setResetError(null);
+                                    setResetParams('{}');
+                                }}
+                                disabled={resetLoading}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-60"
+                                onClick={resetSimulation}
+                                disabled={resetLoading}
+                            >
+                                {resetLoading ? 'Resetting...' : 'Confirm Reset'}
+                            </button>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>
