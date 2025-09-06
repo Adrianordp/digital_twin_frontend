@@ -1,16 +1,29 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { apiClient } from '../services/api-client';
 
 type Props = {
     sessionId: string;
+    selectedModel?: string | null;
     onRefresh?: () => void;
 };
 
-export default function SimulationControls({ sessionId, onRefresh }: Props) {
+const MODEL_CONFIGS: Record<string, { min: number; max: number; step: number; default: number; unit?: string }> = {
+    water_tank: { min: 0, max: 100, step: 1, default: 0, unit: 'L/s' },
+    room_temperature: { min: -10, max: 40, step: 0.1, default: 0, unit: '°C' },
+};
+
+export default function SimulationControls({ sessionId, selectedModel = null, onRefresh }: Props) {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [stepCount, setStepCount] = useState<number | null>(null);
     const [simTime, setSimTime] = useState<number | null>(null);
+
+    const config = selectedModel && MODEL_CONFIGS[selectedModel] ? MODEL_CONFIGS[selectedModel] : { min: -100, max: 100, step: 1, default: 0 };
+    const [controlValue, setControlValue] = useState<number>(config.default);
+
+    useEffect(() => {
+        setControlValue((v) => Math.min(config.max, Math.max(config.min, v)));
+    }, [selectedModel, config.max, config.min]);
 
     function extractStepAndTime(state: Record<string, unknown> | null) {
         if (!state) return { step: null as number | null, time: null as number | null };
@@ -20,8 +33,8 @@ export default function SimulationControls({ sessionId, onRefresh }: Props) {
         for (const k of maybeKeys) {
             const v = state[k];
             if (v === undefined) continue;
-            if (['step', 'step_count'].includes(k) && typeof v === 'number') step = v;
-            if (['time', 't', 'simulation_time'].includes(k) && typeof v === 'number') time = v;
+            if ((k === 'step' || k === 'step_count') && typeof v === 'number') step = v;
+            if ((k === 'time' || k === 't' || k === 'simulation_time') && typeof v === 'number') time = v;
         }
         return { step, time };
     }
@@ -34,11 +47,11 @@ export default function SimulationControls({ sessionId, onRefresh }: Props) {
         let lastError: unknown = null;
         while (attempt < maxRetries) {
             try {
-                await apiClient.stepSimulation(sessionId, 0);
+                await apiClient.stepSimulation(sessionId, controlValue);
                 try {
                     const sres = await apiClient.getState(sessionId);
-                    const { step, time } = extractStepAndTime(sres.state ?? null);
-                    setStepCount(step);
+                    const { step: sc, time } = extractStepAndTime(sres.state ?? null);
+                    setStepCount(sc);
                     setSimTime(time);
                 } catch (e) {
                     void e;
@@ -63,7 +76,7 @@ export default function SimulationControls({ sessionId, onRefresh }: Props) {
     };
 
     return (
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col gap-3">
             <div className="flex items-center gap-3">
                 <button
                     className="px-3 py-1 bg-blue-600 text-white rounded disabled:opacity-60"
@@ -72,11 +85,41 @@ export default function SimulationControls({ sessionId, onRefresh }: Props) {
                 >
                     {loading ? 'Stepping...' : 'Step Forward'}
                 </button>
-                <div className="text-sm text-gray-700">
-                    {stepCount !== null && <span className="mr-3">Step: {stepCount}</span>}
-                    {simTime !== null && <span>Time: {simTime}</span>}
+
+                <div className="flex items-center gap-2 text-sm text-gray-700">
+                    {stepCount !== null && <span className="mr-2">Step: {stepCount}</span>}
+                    {simTime !== null && <span className="mr-2">Time: {simTime}</span>}
                 </div>
             </div>
+
+            <div className="flex items-center gap-4">
+                <label htmlFor="control-slider" className="text-sm text-gray-700 font-medium">Control:</label>
+                <input
+                    id="control-slider"
+                    type="range"
+                    min={config.min}
+                    max={config.max}
+                    step={config.step}
+                    value={controlValue}
+                    onChange={(e) => setControlValue(Number(e.target.value))}
+                    className="flex-1"
+                    data-testid="control-slider"
+                />
+                <input
+                    id="control-input"
+                    type="number"
+                    value={controlValue}
+                    step={config.step}
+                    min={config.min}
+                    max={config.max}
+                    onChange={(e) => setControlValue(Number(e.target.value))}
+                    className="w-20 border rounded px-2 py-1 text-sm"
+                    data-testid="control-input"
+                    aria-labelledby="control-slider"
+                />
+                {config.unit && <span className="text-sm text-gray-600">{config.unit}</span>}
+            </div>
+
             {error && (
                 <div className="text-sm text-red-600">
                     {error}
