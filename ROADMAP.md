@@ -108,8 +108,8 @@ This roadmap outlines the step-by-step development of a React frontend for the D
 **Deliverable**: Interactive control input interface
 
 ### 3.3 Reset Functionality
-- [ ] Add "Reset Simulation" button
-- [ ] Implement reset confirmation dialog
+- [x] Add "Reset Simulation" button
+- [x] Implement reset confirmation dialog
 - [ ] Connect to API client's `resetSimulation` method
 - [ ] Allow reset with new parameters
 - [ ] Clear state display after reset
