@@ -82,6 +82,11 @@ export default function SimulationControls({ sessionId, selectedModel = null, on
     const resetSimulation = async () => {
         setResetLoading(true);
         setResetError(null);
+        // Clear visible simulation state immediately to reflect reset in UI
+        setStepCount(null);
+        setSimTime(null);
+        // Reset control value to model default immediately
+        setControlValue(config.default);
 
         try {
             // Parse the parameters from the input
