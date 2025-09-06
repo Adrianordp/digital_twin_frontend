@@ -17,6 +17,7 @@ export default function SimulationControls({ sessionId, selectedModel = null, on
     const [error, setError] = useState<string | null>(null);
     const [stepCount, setStepCount] = useState<number | null>(null);
     const [simTime, setSimTime] = useState<number | null>(null);
+    const [showResetDialog, setShowResetDialog] = useState<boolean>(false);
 
     const config = selectedModel && MODEL_CONFIGS[selectedModel] ? MODEL_CONFIGS[selectedModel] : { min: -100, max: 100, step: 1, default: 0 };
     const [controlValue, setControlValue] = useState<number>(config.default);
@@ -86,6 +87,14 @@ export default function SimulationControls({ sessionId, selectedModel = null, on
                     {loading ? 'Stepping...' : 'Step Forward'}
                 </button>
 
+                <button
+                    className="px-3 py-1 bg-red-600 text-white rounded disabled:opacity-60 hover:bg-red-700"
+                    onClick={() => setShowResetDialog(true)}
+                    disabled={loading}
+                >
+                    Reset Simulation
+                </button>
+
                 <div className="flex items-center gap-2 text-sm text-gray-700">
                     {stepCount !== null && <span className="mr-2">Step: {stepCount}</span>}
                     {simTime !== null && <span className="mr-2">Time: {simTime}</span>}
@@ -131,6 +140,35 @@ export default function SimulationControls({ sessionId, selectedModel = null, on
                     >
                         Retry
                     </button>
+                </div>
+            )}
+
+            {/* Reset Confirmation Dialog */}
+            {showResetDialog && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+                        <h3 className="text-lg font-semibold mb-4 text-gray-900">Reset Simulation</h3>
+                        <p className="text-gray-600 mb-6">
+                            Are you sure you want to reset the simulation? This will clear all current progress and return to the initial state.
+                        </p>
+                        <div className="flex gap-3 justify-end">
+                            <button
+                                className="px-4 py-2 text-gray-600 border border-gray-300 rounded hover:bg-gray-50"
+                                onClick={() => setShowResetDialog(false)}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                                onClick={() => {
+                                    // TODO: Implement reset functionality
+                                    setShowResetDialog(false);
+                                }}
+                            >
+                                Confirm Reset
+                            </button>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>
