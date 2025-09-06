@@ -20,6 +20,7 @@ export default function SimulationControls({ sessionId, selectedModel = null, on
     const [showResetDialog, setShowResetDialog] = useState<boolean>(false);
     const [resetLoading, setResetLoading] = useState<boolean>(false);
     const [resetError, setResetError] = useState<string | null>(null);
+    const [resetParams, setResetParams] = useState<string>('{}');
 
     const config = selectedModel && MODEL_CONFIGS[selectedModel] ? MODEL_CONFIGS[selectedModel] : { min: -100, max: 100, step: 1, default: 0 };
     const [controlValue, setControlValue] = useState<number>(config.default);
@@ -83,8 +84,18 @@ export default function SimulationControls({ sessionId, selectedModel = null, on
         setResetError(null);
 
         try {
-            // Call the API to reset the simulation
-            const result = await apiClient.resetSimulation(sessionId);
+            // Parse the parameters from the input
+            let parsedParams: Record<string, unknown> | null = null;
+            if (resetParams.trim() !== '{}' && resetParams.trim() !== '') {
+                try {
+                    parsedParams = JSON.parse(resetParams);
+                } catch {
+                    throw new Error('Invalid JSON parameters. Please check the format.');
+                }
+            }
+
+            // Call the API to reset the simulation with parameters
+            const result = await apiClient.resetSimulation(sessionId, parsedParams);
 
             // Extract step and time from the reset state
             const { step: sc, time } = extractStepAndTime(result.state ?? null);
@@ -123,7 +134,11 @@ export default function SimulationControls({ sessionId, selectedModel = null, on
 
                 <button
                     className="px-3 py-1 bg-red-600 text-white rounded disabled:opacity-60 hover:bg-red-700"
-                    onClick={() => setShowResetDialog(true)}
+                    onClick={() => {
+                        setResetParams('{}');
+                        setResetError(null);
+                        setShowResetDialog(true);
+                    }}
                     disabled={loading}
                 >
                     Reset Simulation
@@ -182,9 +197,26 @@ export default function SimulationControls({ sessionId, selectedModel = null, on
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
                         <h3 className="text-lg font-semibold mb-4 text-gray-900">Reset Simulation</h3>
-                        <p className="text-gray-600 mb-6">
+                        <p className="text-gray-600 mb-4">
                             Are you sure you want to reset the simulation? This will clear all current progress and return to the initial state.
                         </p>
+
+                        <div className="mb-4">
+                            <label htmlFor="reset-params" className="block text-sm font-medium text-gray-700 mb-2">
+                                Reset Parameters (optional JSON):
+                            </label>
+                            <textarea
+                                id="reset-params"
+                                className="w-full border border-gray-300 rounded p-2 text-sm font-mono h-20 resize-none"
+                                placeholder='{"param1": "value1", "param2": "value2"}'
+                                value={resetParams}
+                                onChange={(e) => setResetParams(e.target.value)}
+                                disabled={resetLoading}
+                            />
+                            <p className="text-xs text-gray-500 mt-1">
+                                Leave empty or use {"{}"} for default parameters
+                            </p>
+                        </div>
 
                         {resetError && (
                             <div className="mb-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded p-3">
@@ -198,6 +230,7 @@ export default function SimulationControls({ sessionId, selectedModel = null, on
                                 onClick={() => {
                                     setShowResetDialog(false);
                                     setResetError(null);
+                                    setResetParams('{}');
                                 }}
                                 disabled={resetLoading}
                             >
