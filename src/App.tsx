@@ -39,7 +39,7 @@ function InnerApp() {
             {sessionId && <div className="mt-2 text-sm text-green-600">Active session: {sessionId}</div>}
             {sessionId && (
               <div className="mt-2">
-                <SimulationControls sessionId={sessionId} onRefresh={() => setRefreshSignal((s) => s + 1)} />
+                <SimulationControls sessionId={sessionId} selectedModel={selectedModel} onRefresh={() => setRefreshSignal((s) => s + 1)} />
               </div>
             )}
             <div className="mt-4">
