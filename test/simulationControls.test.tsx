@@ -9,6 +9,7 @@ vi.mock('../src/services/api-client', () => ({
     apiClient: {
         stepSimulation: vi.fn(),
         getState: vi.fn(),
+        resetSimulation: vi.fn(),
     },
 }));
 
@@ -28,6 +29,7 @@ describe('SimulationControls', () => {
         mockApiClient.getState.mockResolvedValue({
             state: { step: 5, time: 10.5 }
         });
+        mockApiClient.resetSimulation.mockResolvedValue({ state: {} });
     });
 
     afterEach(() => {
@@ -298,6 +300,99 @@ describe('SimulationControls', () => {
         await waitFor(() => {
             expect(onRefresh).toHaveBeenCalledTimes(1);
             expect(screen.queryByText(/state fetch error/i)).not.toBeInTheDocument();
+        });
+    });
+
+    describe('Reset Functionality', () => {
+        it('shows reset button and opens confirmation dialog', () => {
+            render(<SimulationControls {...defaultProps} />);
+
+            const resetButton = screen.getByRole('button', { name: /reset simulation/i });
+            expect(resetButton).toBeInTheDocument();
+
+            fireEvent.click(resetButton);
+
+            expect(screen.getByText(/are you sure you want to reset/i)).toBeInTheDocument();
+            expect(screen.getByRole('button', { name: /confirm reset/i })).toBeInTheDocument();
+            expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument();
+        });
+
+        it('closes reset dialog when cancel is clicked', () => {
+            render(<SimulationControls {...defaultProps} />);
+
+            const resetButton = screen.getByRole('button', { name: /reset simulation/i });
+            fireEvent.click(resetButton);
+
+            const cancelButton = screen.getByRole('button', { name: /cancel/i });
+            fireEvent.click(cancelButton);
+
+            expect(screen.queryByText(/are you sure you want to reset/i)).not.toBeInTheDocument();
+        });
+
+        it('calls resetSimulation API and updates state on successful reset', async () => {
+            const mockResetResponse = { state: { step: 0, time: 0 } };
+            mockApiClient.resetSimulation.mockResolvedValueOnce(mockResetResponse);
+
+            render(<SimulationControls {...defaultProps} />);
+
+            const resetButton = screen.getByRole('button', { name: /reset simulation/i });
+            fireEvent.click(resetButton);
+
+            const confirmButton = screen.getByRole('button', { name: /confirm reset/i });
+            fireEvent.click(confirmButton);
+
+            await waitFor(() => {
+                expect(mockApiClient.resetSimulation).toHaveBeenCalledWith(defaultProps.sessionId);
+                expect(defaultProps.onRefresh).toHaveBeenCalled();
+            });
+
+            // Dialog should close after successful reset
+            expect(screen.queryByText(/are you sure you want to reset/i)).not.toBeInTheDocument();
+        });
+
+        it('shows loading state during reset', async () => {
+            let resolveReset: (value: { state: Record<string, unknown> }) => void;
+            const resetPromise = new Promise<{ state: Record<string, unknown> }>(resolve => {
+                resolveReset = resolve;
+            });
+            mockApiClient.resetSimulation.mockReturnValue(resetPromise);
+
+            render(<SimulationControls {...defaultProps} />);
+
+            const resetButton = screen.getByRole('button', { name: /reset simulation/i });
+            fireEvent.click(resetButton);
+
+            const confirmButton = screen.getByRole('button', { name: /confirm reset/i });
+            fireEvent.click(confirmButton);
+
+            // Should show loading state
+            expect(screen.getByText('Resetting...')).toBeInTheDocument();
+            expect(confirmButton).toBeDisabled();
+
+            // Resolve the promise
+            resolveReset!({ state: {} });
+            await waitFor(() => {
+                expect(screen.queryByText('Resetting...')).not.toBeInTheDocument();
+            });
+        });
+
+        it('displays error message when reset fails', async () => {
+            mockApiClient.resetSimulation.mockRejectedValueOnce(new Error('Reset failed'));
+
+            render(<SimulationControls {...defaultProps} />);
+
+            const resetButton = screen.getByRole('button', { name: /reset simulation/i });
+            fireEvent.click(resetButton);
+
+            const confirmButton = screen.getByRole('button', { name: /confirm reset/i });
+            fireEvent.click(confirmButton);
+
+            await waitFor(() => {
+                expect(screen.getByText(/failed to reset simulation: reset failed/i)).toBeInTheDocument();
+            });
+
+            // Dialog should remain open to show error
+            expect(screen.getByText(/are you sure you want to reset/i)).toBeInTheDocument();
         });
     });
 });
