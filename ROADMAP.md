@@ -112,8 +112,8 @@ This roadmap outlines the step-by-step development of a React frontend for the D
 - [x] Implement reset confirmation dialog
 - [x] Connect to API client's `resetSimulation` method
 - [x] Allow reset with new parameters
-- [ ] Clear state display after reset
-- [ ] Handle reset errors and feedback
+- [x] Clear state display after reset
+- [x] Handle reset errors and feedback
 
 **Goal**: User can restart simulations
 **Deliverable**: Simulation reset functionality
