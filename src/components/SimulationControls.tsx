@@ -18,6 +18,8 @@ export default function SimulationControls({ sessionId, selectedModel = null, on
     const [stepCount, setStepCount] = useState<number | null>(null);
     const [simTime, setSimTime] = useState<number | null>(null);
     const [showResetDialog, setShowResetDialog] = useState<boolean>(false);
+    const [resetLoading, setResetLoading] = useState<boolean>(false);
+    const [resetError, setResetError] = useState<string | null>(null);
 
     const config = selectedModel && MODEL_CONFIGS[selectedModel] ? MODEL_CONFIGS[selectedModel] : { min: -100, max: 100, step: 1, default: 0 };
     const [controlValue, setControlValue] = useState<number>(config.default);
@@ -74,6 +76,38 @@ export default function SimulationControls({ sessionId, selectedModel = null, on
         }
 
         setLoading(false);
+    };
+
+    const resetSimulation = async () => {
+        setResetLoading(true);
+        setResetError(null);
+
+        try {
+            // Call the API to reset the simulation
+            const result = await apiClient.resetSimulation(sessionId);
+
+            // Extract step and time from the reset state
+            const { step: sc, time } = extractStepAndTime(result.state ?? null);
+            setStepCount(sc);
+            setSimTime(time);
+
+            // Reset control value to default for the current model
+            setControlValue(config.default);
+
+            // Clear any previous errors
+            setError(null);
+
+            // Refresh parent components
+            onRefresh?.();
+
+            // Close the dialog
+            setShowResetDialog(false);
+        } catch (err: unknown) {
+            const msg = err instanceof Error ? err.message : String(err);
+            setResetError(msg);
+        }
+
+        setResetLoading(false);
     };
 
     return (
@@ -151,21 +185,30 @@ export default function SimulationControls({ sessionId, selectedModel = null, on
                         <p className="text-gray-600 mb-6">
                             Are you sure you want to reset the simulation? This will clear all current progress and return to the initial state.
                         </p>
+
+                        {resetError && (
+                            <div className="mb-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded p-3">
+                                Failed to reset simulation: {resetError}
+                            </div>
+                        )}
+
                         <div className="flex gap-3 justify-end">
                             <button
-                                className="px-4 py-2 text-gray-600 border border-gray-300 rounded hover:bg-gray-50"
-                                onClick={() => setShowResetDialog(false)}
+                                className="px-4 py-2 text-gray-600 border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-60"
+                                onClick={() => {
+                                    setShowResetDialog(false);
+                                    setResetError(null);
+                                }}
+                                disabled={resetLoading}
                             >
                                 Cancel
                             </button>
                             <button
-                                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-                                onClick={() => {
-                                    // TODO: Implement reset functionality
-                                    setShowResetDialog(false);
-                                }}
+                                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-60"
+                                onClick={resetSimulation}
+                                disabled={resetLoading}
                             >
-                                Confirm Reset
+                                {resetLoading ? 'Resetting...' : 'Confirm Reset'}
                             </button>
                         </div>
                     </div>
