@@ -342,7 +342,7 @@ describe('SimulationControls', () => {
             fireEvent.click(confirmButton);
 
             await waitFor(() => {
-                expect(mockApiClient.resetSimulation).toHaveBeenCalledWith(defaultProps.sessionId);
+                expect(mockApiClient.resetSimulation).toHaveBeenCalledWith(defaultProps.sessionId, null);
                 expect(defaultProps.onRefresh).toHaveBeenCalled();
             });
 
@@ -393,6 +393,87 @@ describe('SimulationControls', () => {
 
             // Dialog should remain open to show error
             expect(screen.getByText(/are you sure you want to reset/i)).toBeInTheDocument();
+        });
+
+        it('allows entering custom parameters for reset', async () => {
+            render(<SimulationControls {...defaultProps} />);
+
+            const resetButton = screen.getByRole('button', { name: /reset simulation/i });
+            fireEvent.click(resetButton);
+
+            // Should show parameter input
+            const paramInput = screen.getByLabelText(/reset parameters/i);
+            expect(paramInput).toBeInTheDocument();
+            expect(paramInput).toHaveValue('{}');
+
+            // Enter custom parameters
+            fireEvent.change(paramInput, { target: { value: '{"initial_value": 50}' } });
+            expect(paramInput).toHaveValue('{"initial_value": 50}');
+        });
+
+        it('calls resetSimulation with parsed parameters', async () => {
+            const mockResetResponse = { state: { step: 0, time: 0 } };
+            mockApiClient.resetSimulation.mockResolvedValueOnce(mockResetResponse);
+
+            render(<SimulationControls {...defaultProps} />);
+
+            const resetButton = screen.getByRole('button', { name: /reset simulation/i });
+            fireEvent.click(resetButton);
+
+            // Enter custom parameters
+            const paramInput = screen.getByLabelText(/reset parameters/i);
+            fireEvent.change(paramInput, { target: { value: '{"initial_level": 75, "flow_rate": 2.5}' } });
+
+            const confirmButton = screen.getByRole('button', { name: /confirm reset/i });
+            fireEvent.click(confirmButton);
+
+            await waitFor(() => {
+                expect(mockApiClient.resetSimulation).toHaveBeenCalledWith(
+                    defaultProps.sessionId,
+                    { initial_level: 75, flow_rate: 2.5 }
+                );
+            });
+        });
+
+        it('shows error for invalid JSON parameters', async () => {
+            render(<SimulationControls {...defaultProps} />);
+
+            const resetButton = screen.getByRole('button', { name: /reset simulation/i });
+            fireEvent.click(resetButton);
+
+            // Enter invalid JSON
+            const paramInput = screen.getByLabelText(/reset parameters/i);
+            fireEvent.change(paramInput, { target: { value: '{"invalid": json}' } });
+
+            const confirmButton = screen.getByRole('button', { name: /confirm reset/i });
+            fireEvent.click(confirmButton);
+
+            await waitFor(() => {
+                expect(screen.getByText(/invalid json parameters/i)).toBeInTheDocument();
+            });
+
+            // Should not call the API with invalid parameters
+            expect(mockApiClient.resetSimulation).not.toHaveBeenCalled();
+        });
+
+        it('resets parameters when dialog is opened and closed', () => {
+            render(<SimulationControls {...defaultProps} />);
+
+            const resetButton = screen.getByRole('button', { name: /reset simulation/i });
+            fireEvent.click(resetButton);
+
+            // Modify parameters
+            const paramInput = screen.getByLabelText(/reset parameters/i);
+            fireEvent.change(paramInput, { target: { value: '{"test": "value"}' } });
+
+            // Close dialog
+            const cancelButton = screen.getByRole('button', { name: /cancel/i });
+            fireEvent.click(cancelButton);
+
+            // Reopen dialog - should be reset to default
+            fireEvent.click(resetButton);
+            const newParamInput = screen.getByLabelText(/reset parameters/i);
+            expect(newParamInput).toHaveValue('{}');
         });
     });
 });
