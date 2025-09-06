@@ -110,7 +110,7 @@ This roadmap outlines the step-by-step development of a React frontend for the D
 ### 3.3 Reset Functionality
 - [x] Add "Reset Simulation" button
 - [x] Implement reset confirmation dialog
-- [ ] Connect to API client's `resetSimulation` method
+- [x] Connect to API client's `resetSimulation` method
 - [ ] Allow reset with new parameters
 - [ ] Clear state display after reset
 - [ ] Handle reset errors and feedback
