@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { apiClient } from '../services/api-client';
+import { useSession } from '../context/useSession';
 
 export interface SimulationInitializerProps {
     modelName: string;
@@ -10,7 +11,8 @@ export default function SimulationInitializer({ modelName, onInit }: SimulationI
     const [paramsText, setParamsText] = useState<string>('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [sessionId, setSessionId] = useState<string | null>(null);
+    const { sessionId: ctxSessionId, setSessionId } = useSession();
+    const [localSessionId, setLocalSessionId] = useState<string | null>(null);
     const [initialValue, setInitialValue] = useState<number | ''>('');
     const [showAdvanced, setShowAdvanced] = useState(false);
 
@@ -40,6 +42,8 @@ export default function SimulationInitializer({ modelName, onInit }: SimulationI
         setLoading(true);
         try {
             const res = await apiClient.initSimulation(modelName, params);
+            // update both local display state and shared context
+            setLocalSessionId(res.sessionId);
             setSessionId(res.sessionId);
             if (onInit) onInit(res.sessionId);
         } catch (err: unknown) {
@@ -99,7 +103,9 @@ export default function SimulationInitializer({ modelName, onInit }: SimulationI
                 >
                     {loading ? 'Initializing...' : 'Initialize Simulation'}
                 </button>
-                {sessionId && <div className="text-sm text-green-600">Session: {sessionId}</div>}
+                {(localSessionId || ctxSessionId) && (
+                    <div className="text-sm text-green-600">Session: {localSessionId ?? ctxSessionId}</div>
+                )}
             </div>
 
             {error && <div className="text-sm text-red-600">{error}</div>}

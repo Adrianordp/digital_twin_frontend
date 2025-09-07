@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
 
 import type { SessionContextValue } from './types';
@@ -23,12 +23,26 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         }
     });
 
+    // Track first render so we don't clear an existing sessionId when
+    // initializing selectedModel from localStorage on mount.
+    const firstModelRender = useRef(true);
+
     useEffect(() => {
         try {
             if (selectedModel) localStorage.setItem('selectedModel', selectedModel);
         } catch (e) {
             // ignore localStorage errors
             void e;
+        }
+    }, [selectedModel]);
+
+    // No-op for model change: sessionId is kept. Previously we cleared the
+    // sessionId on model switch, but that caused UI flicker and discarded
+    // sessions unexpectedly. Session lifecycle should be managed by the
+    // initializer or the ModelSelector auto-init behavior.
+    useEffect(() => {
+        if (firstModelRender.current) {
+            firstModelRender.current = false;
         }
     }, [selectedModel]);
 
