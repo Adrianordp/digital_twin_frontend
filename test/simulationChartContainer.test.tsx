@@ -82,4 +82,21 @@ describe('SimulationChartContainer', () => {
             expect(screen.getByText(/no history data available/i)).toBeInTheDocument();
         });
     });
+
+    it('transforms data without time fields by adding step index', async () => {
+        vi.mocked(apiClient.getHistory).mockResolvedValue({
+            history: [
+                { level: 0.995 },
+                { level: 1.980 },
+                { level: 2.955 }
+            ]
+        });
+
+        renderWithSession('session-4');
+
+        await waitFor(() => {
+            expect(screen.getByTestId('simulation-chart')).toBeInTheDocument();
+            expect(screen.getByTestId('simulation-chart')).toHaveAttribute('data-data-length', '3');
+        });
+    });
 });
