@@ -10,6 +10,15 @@ vi.mock('../src/services/api-client', () => ({
     },
 }));
 
+vi.mock('../src/context/useSession', () => ({
+    useSession: () => ({
+        selectedModel: 'water_tank',
+        setSelectedModel: vi.fn(),
+        sessionId: null,
+        setSessionId: vi.fn(),
+    }),
+}));
+
 describe('SimulationInitializer', () => {
     beforeEach(() => {
         vi.clearAllMocks();
@@ -22,7 +31,6 @@ describe('SimulationInitializer', () => {
         const onInit = vi.fn();
         render(<SimulationInitializer modelName="water_tank" onInit={onInit} />);
 
-        // Use structured initial value input
         const input = screen.getByPlaceholderText('Leave empty to use advanced JSON');
         fireEvent.change(input, { target: { value: '10' } });
 
@@ -37,7 +45,6 @@ describe('SimulationInitializer', () => {
 
     it('shows error for invalid JSON', async () => {
         render(<SimulationInitializer modelName="water_tank" />);
-        // Toggle advanced to reveal textarea and enter invalid JSON
         const toggle = screen.getByText('Show advanced JSON');
         fireEvent.click(toggle);
         const textarea = screen.getByPlaceholderText('{ "initial": 0 }');
@@ -67,7 +74,6 @@ describe('SimulationInitializer', () => {
 
         render(<SimulationInitializer modelName="room_temperature" />);
 
-        // Reveal advanced textarea
         const toggle = screen.getByText('Show advanced JSON');
         fireEvent.click(toggle);
         const textarea = screen.getByTestId('params-textarea');

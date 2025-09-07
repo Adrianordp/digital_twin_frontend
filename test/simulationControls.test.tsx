@@ -4,7 +4,6 @@ import '@testing-library/jest-dom';
 import SimulationControls from '../src/components/SimulationControls';
 import { apiClient } from '../src/services/api-client';
 
-// Mock the API client
 vi.mock('../src/services/api-client', () => ({
     apiClient: {
         stepSimulation: vi.fn(),
@@ -24,7 +23,6 @@ describe('SimulationControls', () => {
 
     beforeEach(() => {
         vi.clearAllMocks();
-        // Default successful responses
         mockApiClient.stepSimulation.mockResolvedValue({ state: {} });
         mockApiClient.getState.mockResolvedValue({
             state: { step: 5, time: 10.5 }
@@ -93,11 +91,9 @@ describe('SimulationControls', () => {
         const slider = screen.getByTestId('control-slider') as HTMLInputElement;
         const numberInput = screen.getByTestId('control-input') as HTMLInputElement;
 
-        // Change slider value
         fireEvent.change(slider, { target: { value: '50' } });
         expect(numberInput.value).toBe('50');
 
-        // Change number input value
         fireEvent.change(numberInput, { target: { value: '75' } });
         expect(slider.value).toBe('75');
     });
@@ -108,10 +104,8 @@ describe('SimulationControls', () => {
         const slider = screen.getByTestId('control-slider');
         const stepButton = screen.getByRole('button', { name: /step forward/i });
 
-        // Set control value
         fireEvent.change(slider, { target: { value: '25' } });
 
-        // Click step button
         fireEvent.click(stepButton);
 
         await waitFor(() => {
@@ -159,11 +153,9 @@ describe('SimulationControls', () => {
         const stepButton = screen.getByRole('button', { name: /step forward/i });
         fireEvent.click(stepButton);
 
-        // Button should show loading state
         expect(screen.getByText('Stepping...')).toBeInTheDocument();
         expect(stepButton).toBeDisabled();
 
-        // Resolve the promise
         resolveStep!({ state: {} });
         await waitFor(() => {
             expect(screen.getByText('Step Forward')).toBeInTheDocument();
@@ -179,7 +171,6 @@ describe('SimulationControls', () => {
         const stepButton = screen.getByRole('button', { name: /step forward/i });
         fireEvent.click(stepButton);
 
-        // Wait for the error to appear after all retries
         await waitFor(() => {
             expect(screen.getByText(/Network error/i)).toBeInTheDocument();
             expect(screen.getByRole('button', { name: /retry/i })).toBeInTheDocument();
@@ -187,7 +178,6 @@ describe('SimulationControls', () => {
     });
 
     it('retries on failure with exponential backoff', async () => {
-        // Mock first two calls to fail, third to succeed
         mockApiClient.stepSimulation
             .mockRejectedValueOnce(new Error('First failure'))
             .mockRejectedValueOnce(new Error('Second failure'))
@@ -198,12 +188,10 @@ describe('SimulationControls', () => {
         const stepButton = screen.getByRole('button', { name: /step forward/i });
         fireEvent.click(stepButton);
 
-        // Wait for all retries to complete
         await waitFor(() => {
             expect(mockApiClient.stepSimulation).toHaveBeenCalledTimes(3);
         }, { timeout: 10000 });
 
-        // Should not show error since last retry succeeded
         await waitFor(() => {
             expect(screen.queryByText(/error/i)).not.toBeInTheDocument();
         });
@@ -217,13 +205,13 @@ describe('SimulationControls', () => {
         const stepButton = screen.getByRole('button', { name: /step forward/i });
         fireEvent.click(stepButton);
 
-        // Wait for all retries to complete and error to be shown
         await waitFor(() => {
             expect(mockApiClient.stepSimulation).toHaveBeenCalledTimes(3);
             expect(screen.getByText(/Persistent error/i)).toBeInTheDocument();
         }, { timeout: 15000 });
-    }); it('allows manual retry via retry button', async () => {
-        // Mock to fail for all automatic retries (3 times), then succeed on manual retry
+    });
+
+    it('allows manual retry via retry button', async () => {
         mockApiClient.stepSimulation.mockRejectedValue(new Error('First error'))
             .mockRejectedValueOnce(new Error('First error'))
             .mockRejectedValueOnce(new Error('First error'))
@@ -235,12 +223,10 @@ describe('SimulationControls', () => {
         const stepButton = screen.getByRole('button', { name: /step forward/i });
         fireEvent.click(stepButton);
 
-        // Wait for the error to appear after retries fail
         await waitFor(() => {
             expect(screen.getByText(/First error/i)).toBeInTheDocument();
         }, { timeout: 15000 });
 
-        // Clear the mock and set it up for success on retry
         mockApiClient.stepSimulation.mockClear();
         mockApiClient.stepSimulation.mockResolvedValueOnce({ state: {} });
 
@@ -259,16 +245,13 @@ describe('SimulationControls', () => {
 
         const numberInput = screen.getByTestId('control-input') as HTMLInputElement;
 
-        // Set value to 150 (outside water_tank range)
         fireEvent.change(numberInput, { target: { value: '150' } });
 
-        // Change to room_temperature model (range: -10 to 40)
         rerender(
             <SimulationControls {...defaultProps} selectedModel="room_temperature" />
         );
 
         await waitFor(() => {
-            // Value should be clamped to room_temperature max (40)
             expect(numberInput.value).toBe('40');
         });
     });
@@ -346,7 +329,6 @@ describe('SimulationControls', () => {
                 expect(defaultProps.onRefresh).toHaveBeenCalled();
             });
 
-            // Dialog should close after successful reset
             expect(screen.queryByText(/are you sure you want to reset/i)).not.toBeInTheDocument();
         });
 
@@ -365,11 +347,9 @@ describe('SimulationControls', () => {
             const confirmButton = screen.getByRole('button', { name: /confirm reset/i });
             fireEvent.click(confirmButton);
 
-            // Should show loading state
             expect(screen.getByText('Resetting...')).toBeInTheDocument();
             expect(confirmButton).toBeDisabled();
 
-            // Resolve the promise
             resolveReset!({ state: {} });
             await waitFor(() => {
                 expect(screen.queryByText('Resetting...')).not.toBeInTheDocument();
@@ -391,7 +371,6 @@ describe('SimulationControls', () => {
                 expect(screen.getByText(/failed to reset simulation: reset failed/i)).toBeInTheDocument();
             });
 
-            // Dialog should remain open to show error
             expect(screen.getByText(/are you sure you want to reset/i)).toBeInTheDocument();
         });
 
@@ -401,12 +380,10 @@ describe('SimulationControls', () => {
             const resetButton = screen.getByRole('button', { name: /reset simulation/i });
             fireEvent.click(resetButton);
 
-            // Should show parameter input
             const paramInput = screen.getByLabelText(/reset parameters/i);
             expect(paramInput).toBeInTheDocument();
             expect(paramInput).toHaveValue('{}');
 
-            // Enter custom parameters
             fireEvent.change(paramInput, { target: { value: '{"initial_value": 50}' } });
             expect(paramInput).toHaveValue('{"initial_value": 50}');
         });
@@ -420,7 +397,6 @@ describe('SimulationControls', () => {
             const resetButton = screen.getByRole('button', { name: /reset simulation/i });
             fireEvent.click(resetButton);
 
-            // Enter custom parameters
             const paramInput = screen.getByLabelText(/reset parameters/i);
             fireEvent.change(paramInput, { target: { value: '{"initial_level": 75, "flow_rate": 2.5}' } });
 
@@ -441,7 +417,6 @@ describe('SimulationControls', () => {
             const resetButton = screen.getByRole('button', { name: /reset simulation/i });
             fireEvent.click(resetButton);
 
-            // Enter invalid JSON
             const paramInput = screen.getByLabelText(/reset parameters/i);
             fireEvent.change(paramInput, { target: { value: '{"invalid": json}' } });
 
@@ -452,7 +427,6 @@ describe('SimulationControls', () => {
                 expect(screen.getByText(/invalid json parameters/i)).toBeInTheDocument();
             });
 
-            // Should not call the API with invalid parameters
             expect(mockApiClient.resetSimulation).not.toHaveBeenCalled();
         });
 
@@ -462,15 +436,12 @@ describe('SimulationControls', () => {
             const resetButton = screen.getByRole('button', { name: /reset simulation/i });
             fireEvent.click(resetButton);
 
-            // Modify parameters
             const paramInput = screen.getByLabelText(/reset parameters/i);
             fireEvent.change(paramInput, { target: { value: '{"test": "value"}' } });
 
-            // Close dialog
             const cancelButton = screen.getByRole('button', { name: /cancel/i });
             fireEvent.click(cancelButton);
 
-            // Reopen dialog - should be reset to default
             fireEvent.click(resetButton);
             const newParamInput = screen.getByLabelText(/reset parameters/i);
             expect(newParamInput).toHaveValue('{}');

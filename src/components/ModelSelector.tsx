@@ -9,7 +9,11 @@ export interface ModelSelectorProps {
   onChange: (value: string) => void;
 }
 
+import { apiClient } from '../services/api-client';
+import { useSession } from '../context/useSession';
+
 export default function ModelSelector({ value, onChange }: ModelSelectorProps) {
+  const { setSessionId } = useSession();
   const options: ModelOption[] = [
     { value: 'water_tank', label: 'Water Tank', description: 'Simple tank with inflow/outflow dynamics.' },
     { value: 'room_temperature', label: 'Room Temperature', description: 'Thermal model controlling temperature over time.' },
@@ -17,6 +21,17 @@ export default function ModelSelector({ value, onChange }: ModelSelectorProps) {
 
   function handleChange(modelName: string) {
     onChange(modelName);
+
+    (async () => {
+      try {
+        const res = await apiClient.initSimulation(modelName, null);
+        if (res?.sessionId) {
+          setSessionId(res.sessionId);
+        }
+      } catch (err) {
+        console.error('Failed to auto-initialize simulation for model', modelName, err);
+      }
+    })();
   }
 
   return (
