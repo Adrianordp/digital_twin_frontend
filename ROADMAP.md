@@ -127,7 +127,7 @@ This roadmap outlines the step-by-step development of a React frontend for the D
 - [x] Display state variables as line charts over time
 - [x] Make charts responsive and interactive
 - [x] Add chart legends and axis labels
-- [ ] Handle different data types and scales
+- [x] Handle different data types and scales
 
 **Goal**: Visualize simulation data over time
 **Deliverable**: Interactive charts showing simulation history
