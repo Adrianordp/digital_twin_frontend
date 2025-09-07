@@ -42,6 +42,7 @@ vi.mock('recharts', () => ({
     ResponsiveContainer: ({ children }: MockChartProps) => (
         <div data-testid="responsive-container">{children}</div>
     ),
+    Brush: (props: Record<string, unknown>) => <div data-testid="mock-brush" {...props} />, // Add mock for Brush
 }));
 
 describe('SimulationChart', () => {
