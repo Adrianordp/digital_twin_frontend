@@ -32,14 +32,42 @@ const SimulationChart: React.FC<SimulationChartProps> = ({ data }) => {
             <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={data} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey={timeKey} minTickGap={10} />
-                    <YAxis allowDecimals domain={['auto', 'auto']} />
+                    <XAxis dataKey={timeKey} minTickGap={10}>
+                        <text
+                            x={0}
+                            y={35}
+                            fill="#666"
+                            textAnchor="middle"
+                            dominantBaseline="hanging"
+                            style={{ fontSize: 14 }}
+                        >
+                            {getAxisLabel(timeKey)}
+                        </text>
+                    </XAxis>
+                    <YAxis allowDecimals domain={['auto', 'auto']}>
+                        <text
+                            x={-40}
+                            y={180}
+                            fill="#666"
+                            textAnchor="middle"
+                            transform="rotate(-90)"
+                            style={{ fontSize: 14 }}
+                        >
+                            Value
+                        </text>
+                    </YAxis>
                     <Tooltip
                         isAnimationActive={false}
                         formatter={(value: number | string, name: string) => [value, name]}
                         labelFormatter={(label: string | number) => `${timeKey}: ${label}`}
                     />
-                    <Legend onClick={handleLegendClick} wrapperStyle={{ cursor: 'pointer' }} />
+                    <Legend
+                        onClick={handleLegendClick}
+                        wrapperStyle={{ cursor: 'pointer' }}
+                        align="center"
+                        verticalAlign="top"
+                        iconType="line"
+                    />
                     {lines.map((key, index) => (
                         <Line
                             key={key}
@@ -58,9 +86,22 @@ const SimulationChart: React.FC<SimulationChartProps> = ({ data }) => {
     );
 };
 
+
 function getColor(index: number): string {
     const colors = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#0088fe'];
     return colors[index % colors.length];
+}
+
+// Helper to prettify axis label
+function getAxisLabel(key: string): string {
+    const map: Record<string, string> = {
+        time: 'Time',
+        t: 'Time',
+        step: 'Step',
+        step_count: 'Step',
+        simulation_time: 'Simulation Time',
+    };
+    return map[key.toLowerCase()] || key;
 }
 
 export default SimulationChart;
