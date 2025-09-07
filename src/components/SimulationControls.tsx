@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { apiClient } from '../services/api-client';
+import SimulationChartContainer from './SimulationChartContainer';
 
 type Props = {
     sessionId: string;
@@ -250,6 +251,9 @@ export default function SimulationControls({ sessionId, selectedModel = null, on
                     </div>
                 </div>
             )}
+
+            {/* Simulation Chart */}
+            <SimulationChartContainer />
         </div>
     );
 }
