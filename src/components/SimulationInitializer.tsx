@@ -21,12 +21,12 @@ export default function SimulationInitializer({ modelName, onInit }: SimulationI
         setError(null);
 
         let params: Record<string, unknown> | null = null;
-        // structured input wins over raw JSON if provided
+        // Structured input wins over raw JSON if provided
         if (initialValue !== '') {
             params = { initial: initialValue };
         } else if (paramsText.trim() !== '') {
             try {
-                // allow users to enter JSON object
+                // Allow users to enter JSON object
                 const parsed = JSON.parse(paramsText);
                 if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) {
                     setError('Parameters must be a JSON object');
@@ -42,7 +42,7 @@ export default function SimulationInitializer({ modelName, onInit }: SimulationI
         setLoading(true);
         try {
             const res = await apiClient.initSimulation(modelName, params);
-            // update both local display state and shared context
+            // Update both local display state and shared context
             setLocalSessionId(res.sessionId);
             setSessionId(res.sessionId);
             if (onInit) onInit(res.sessionId);

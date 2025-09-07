@@ -20,11 +20,8 @@ export default function ModelSelector({ value, onChange }: ModelSelectorProps) {
   ];
 
   function handleChange(modelName: string) {
-    // Update selected model immediately (UI update)
     onChange(modelName);
 
-    // Create a new simulation session/section for the selected model.
-    // Fire-and-forget: do not block the UI on initialization.
     (async () => {
       try {
         const res = await apiClient.initSimulation(modelName, null);
@@ -32,8 +29,6 @@ export default function ModelSelector({ value, onChange }: ModelSelectorProps) {
           setSessionId(res.sessionId);
         }
       } catch (err) {
-        // Log error; SimulationInitializer covers the full init flow.
-        // eslint-disable-next-line no-console
         console.error('Failed to auto-initialize simulation for model', modelName, err);
       }
     })();

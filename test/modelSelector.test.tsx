@@ -9,7 +9,6 @@ vi.mock('../src/services/api-client', () => ({
     },
 }));
 
-// Mock session hook to provide setSessionId
 vi.mock('../src/context/useSession', () => ({
     useSession: () => ({ setSessionId: vi.fn() }),
 }));
@@ -19,14 +18,11 @@ describe('ModelSelector', () => {
         const mockOnChange = vi.fn();
         render(<ModelSelector value="water_tank" onChange={mockOnChange} />);
 
-        // Check if the fieldset legend is present
         expect(screen.getByText('Choose a model')).toBeInTheDocument();
 
-        // Check if both model options are present
         expect(screen.getByLabelText(/Water Tank/)).toBeInTheDocument();
         expect(screen.getByLabelText(/Room Temperature/)).toBeInTheDocument();
 
-        // Check if descriptions are shown
         expect(screen.getByText('Simple tank with inflow/outflow dynamics.')).toBeInTheDocument();
         expect(screen.getByText('Thermal model controlling temperature over time.')).toBeInTheDocument();
     });
@@ -60,10 +56,8 @@ describe('ModelSelector', () => {
         const waterTankLabel = screen.getByLabelText(/Water Tank/).closest('label');
         const roomTempLabel = screen.getByLabelText(/Room Temperature/).closest('label');
 
-        // Selected option should have blue border and background
         expect(waterTankLabel).toHaveClass('border-blue-300', 'bg-blue-50');
 
-        // Unselected option should have gray border and white background
         expect(roomTempLabel).toHaveClass('border-gray-200', 'bg-white');
     });
 
@@ -74,7 +68,6 @@ describe('ModelSelector', () => {
         const waterTankRadio = screen.getByRole('radio', { name: /Water Tank/ });
         fireEvent.click(waterTankRadio);
 
-        // Radio buttons don't trigger change when clicking already selected option
         expect(mockOnChange).not.toHaveBeenCalled();
     });
 

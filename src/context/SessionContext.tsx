@@ -23,23 +23,17 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         }
     });
 
-    // Track first render so we don't clear an existing sessionId when
-    // initializing selectedModel from localStorage on mount.
     const firstModelRender = useRef(true);
 
     useEffect(() => {
         try {
             if (selectedModel) localStorage.setItem('selectedModel', selectedModel);
         } catch (e) {
-            // ignore localStorage errors
+            // Ignore localStorage errors
             void e;
         }
     }, [selectedModel]);
 
-    // No-op for model change: sessionId is kept. Previously we cleared the
-    // sessionId on model switch, but that caused UI flicker and discarded
-    // sessions unexpectedly. Session lifecycle should be managed by the
-    // initializer or the ModelSelector auto-init behavior.
     useEffect(() => {
         if (firstModelRender.current) {
             firstModelRender.current = false;
@@ -51,7 +45,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
             if (sessionId) localStorage.setItem('sessionId', sessionId);
             else localStorage.removeItem('sessionId');
         } catch (e) {
-            // ignore localStorage errors
+            // Ignore localStorage errors
             void e;
         }
     }, [sessionId]);
