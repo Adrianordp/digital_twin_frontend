@@ -11,10 +11,20 @@ const SimulationChart: React.FC<SimulationChartProps> = ({ data }) => {
     const keysToExclude = ['time', 't', 'step', 'step_count', 'simulation_time'];
     const lines = Object.keys(data[0] || {}).filter(key => !keysToExclude.includes(key.toLowerCase()));
 
+
     // Find the time field - it could be 'time', 't', 'step', or similar
     const timeKey = Object.keys(data[0] || {}).find(key =>
         ['time', 't', 'step', 'step_count', 'simulation_time'].includes(key.toLowerCase())
     ) || 'step'; // Default to 'step' since we add it in the container
+
+    // Detect if x axis is numeric or categorical
+    const isXAxisNumeric = data.length > 0 && typeof data[0][timeKey] === 'number';
+
+    // Detect if any y values are non-numeric (categorical)
+    const yTypes = lines.map(key => {
+        const firstVal = data.find(d => d[key] !== undefined)?.[key];
+        return typeof firstVal;
+    });
 
     // Interactive: allow toggling lines
     const [hiddenKeys, setHiddenKeys] = useState<string[]>([]);
@@ -32,7 +42,12 @@ const SimulationChart: React.FC<SimulationChartProps> = ({ data }) => {
             <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={data} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey={timeKey} minTickGap={10}>
+                    <XAxis
+                        dataKey={timeKey}
+                        minTickGap={10}
+                        type={isXAxisNumeric ? 'number' : 'category'}
+                        allowDuplicatedCategory={!isXAxisNumeric}
+                    >
                         <text
                             x={0}
                             y={35}
@@ -44,7 +59,11 @@ const SimulationChart: React.FC<SimulationChartProps> = ({ data }) => {
                             {getAxisLabel(timeKey)}
                         </text>
                     </XAxis>
-                    <YAxis allowDecimals domain={['auto', 'auto']}>
+                    <YAxis
+                        allowDecimals
+                        domain={['auto', 'auto']}
+                        type={yTypes.every(t => t === 'number') ? 'number' : 'category'}
+                    >
                         <text
                             x={-40}
                             y={180}
@@ -71,7 +90,7 @@ const SimulationChart: React.FC<SimulationChartProps> = ({ data }) => {
                     {lines.map((key, index) => (
                         <Line
                             key={key}
-                            type="monotone"
+                            type={yTypes[index] === 'number' ? 'monotone' : 'stepAfter'}
                             dataKey={key}
                             stroke={getColor(index)}
                             dot={false}
