@@ -3,6 +3,17 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ModelSelector from '../src/components/ModelSelector';
 
+vi.mock('../src/services/api-client', () => ({
+    apiClient: {
+        initSimulation: vi.fn(),
+    },
+}));
+
+// Mock session hook to provide setSessionId
+vi.mock('../src/context/useSession', () => ({
+    useSession: () => ({ setSessionId: vi.fn() }),
+}));
+
 describe('ModelSelector', () => {
     it('renders model options correctly', () => {
         const mockOnChange = vi.fn();

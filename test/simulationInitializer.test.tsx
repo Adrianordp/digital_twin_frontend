@@ -10,6 +10,16 @@ vi.mock('../src/services/api-client', () => ({
     },
 }));
 
+// Mock session hook used by SimulationInitializer so tests don't need the provider
+vi.mock('../src/context/useSession', () => ({
+    useSession: () => ({
+        selectedModel: 'water_tank',
+        setSelectedModel: vi.fn(),
+        sessionId: null,
+        setSessionId: vi.fn(),
+    }),
+}));
+
 describe('SimulationInitializer', () => {
     beforeEach(() => {
         vi.clearAllMocks();
