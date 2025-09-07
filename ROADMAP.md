@@ -122,7 +122,7 @@ This roadmap outlines the step-by-step development of a React frontend for the D
 
 ### 4.1 State History Chart
 - [x] Install Recharts charting library
-- [ ] Create `SimulationChart` component
+- [x] Create `SimulationChart` component
 - [ ] Fetch simulation history from API
 - [ ] Display state variables as line charts over time
 - [ ] Make charts responsive and interactive
