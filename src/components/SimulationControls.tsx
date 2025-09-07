@@ -5,6 +5,7 @@ type Props = {
     sessionId: string;
     selectedModel?: string | null;
     onRefresh?: () => void;
+    onChartRefresh?: () => void;
 };
 
 const MODEL_CONFIGS: Record<string, { min: number; max: number; step: number; default: number; unit?: string }> = {
@@ -12,7 +13,7 @@ const MODEL_CONFIGS: Record<string, { min: number; max: number; step: number; de
     room_temperature: { min: -10, max: 40, step: 0.1, default: 0, unit: '°C' },
 };
 
-export default function SimulationControls({ sessionId, selectedModel = null, onRefresh }: Props) {
+export default function SimulationControls({ sessionId, selectedModel = null, onRefresh, onChartRefresh }: Props) {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [stepCount, setStepCount] = useState<number | null>(null);
@@ -61,6 +62,7 @@ export default function SimulationControls({ sessionId, selectedModel = null, on
                     void e;
                 }
                 onRefresh?.();
+                onChartRefresh?.();
                 lastError = null;
                 break;
             } catch (err: unknown) {
@@ -113,6 +115,7 @@ export default function SimulationControls({ sessionId, selectedModel = null, on
 
             // Refresh parent components
             onRefresh?.();
+            onChartRefresh?.();
 
             // Close the dialog
             setShowResetDialog(false);
@@ -250,6 +253,8 @@ export default function SimulationControls({ sessionId, selectedModel = null, on
                     </div>
                 </div>
             )}
+
+            {/* Simulation Chart removed - moved to App.tsx */}
         </div>
     );
 }

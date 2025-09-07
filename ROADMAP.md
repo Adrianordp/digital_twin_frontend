@@ -121,13 +121,13 @@ This roadmap outlines the step-by-step development of a React frontend for the D
 ## Phase 4: Data Visualization
 
 ### 4.1 State History Chart
-- [ ] Install Recharts charting library
-- [ ] Create `SimulationChart` component
-- [ ] Fetch simulation history from API
-- [ ] Display state variables as line charts over time
-- [ ] Make charts responsive and interactive
-- [ ] Add chart legends and axis labels
-- [ ] Handle different data types and scales
+- [x] Install Recharts charting library
+- [x] Create `SimulationChart` component
+- [x] Fetch simulation history from API
+- [x] Display state variables as line charts over time
+- [x] Make charts responsive and interactive
+- [x] Add chart legends and axis labels
+- [x] Handle different data types and scales
 
 **Goal**: Visualize simulation data over time
 **Deliverable**: Interactive charts showing simulation history

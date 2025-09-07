@@ -3,12 +3,14 @@ import ModelSelector from './components/ModelSelector';
 import SimulationInitializer from './components/SimulationInitializer';
 import StateDisplay from './components/StateDisplay';
 import SimulationControls from './components/SimulationControls';
+import SimulationChartContainer from './components/SimulationChartContainer';
 import { SessionProvider } from './context/SessionContext';
 import { useSession } from './context/useSession';
 
 function InnerApp() {
   const { selectedModel, setSelectedModel, sessionId, setSessionId } = useSession();
   const [refreshSignal, setRefreshSignal] = React.useState<number>(0);
+  const [chartRefreshTrigger, setChartRefreshTrigger] = React.useState<number>(0);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -39,7 +41,12 @@ function InnerApp() {
             {sessionId && <div className="mt-2 text-sm text-green-600">Active session: {sessionId}</div>}
             {sessionId && (
               <div className="mt-2">
-                <SimulationControls sessionId={sessionId} selectedModel={selectedModel} onRefresh={() => setRefreshSignal((s) => s + 1)} />
+                <SimulationControls
+                  sessionId={sessionId}
+                  selectedModel={selectedModel}
+                  onRefresh={() => setRefreshSignal((s) => s + 1)}
+                  onChartRefresh={() => setChartRefreshTrigger((s) => s + 1)}
+                />
               </div>
             )}
             <div className="mt-4">
@@ -47,6 +54,16 @@ function InnerApp() {
             </div>
           </div>
         </div>
+
+        {/* Separate chart section to prevent flickering */}
+        {sessionId && (
+          <div id="history" className="w-full max-w-3xl bg-white rounded-md shadow-sm p-6 mx-auto mt-6">
+            <h2 className="text-lg font-semibold text-gray-800">Simulation History</h2>
+            <div className="mt-4">
+              <SimulationChartContainer refreshTrigger={chartRefreshTrigger} />
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
